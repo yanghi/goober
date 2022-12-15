@@ -10,6 +10,7 @@ type Response struct {
 	Data any    `json:"data"`
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
+	Ok   bool   `json:"ok"`
 }
 
 func Build(data any, code int, msg string) *Response {
@@ -18,6 +19,7 @@ func Build(data any, code int, msg string) *Response {
 		Data: data,
 		Msg:  msg,
 		Code: code,
+		Ok:   code == ecode.Ok,
 	}
 
 	return &r
@@ -28,6 +30,7 @@ func BuildOkResponse(data any) *Response {
 		Data: data,
 		Code: ecode.Ok,
 		Msg:  "ok",
+		Ok:   true,
 	}
 }
 

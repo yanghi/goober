@@ -36,7 +36,9 @@ func (l *LoginService) Login() *rep.Response {
 		return rep.Build(nil, ecode.UnExpect, "账号或密码错误")
 	}
 
-	return rep.BuildOkResponse(ms[0])
+	return rep.BuildOkResponse(map[string]any{
+		"user": ms[0],
+	})
 }
 
 func (l *LoginService) ValidateParams() *rep.Response {
