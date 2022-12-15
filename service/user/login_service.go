@@ -2,7 +2,7 @@ package user
 
 import (
 	"goblog/database/mysql"
-	ecode "goblog/error/code"
+	gerr "goblog/error"
 	"goblog/rep"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -33,7 +33,7 @@ func (l *LoginService) Login() *rep.Response {
 	}
 
 	if len(ms) == 0 {
-		return rep.Build(nil, ecode.UnExpect, "账号或密码错误")
+		return rep.Build(nil, gerr.ErrUnExpect, "账号或密码错误")
 	}
 
 	return rep.BuildOkResponse(map[string]any{
@@ -43,11 +43,11 @@ func (l *LoginService) Login() *rep.Response {
 
 func (l *LoginService) ValidateParams() *rep.Response {
 	if l.Name == "" {
-		return rep.Build(nil, ecode.ParamsError, "用户名格式错误")
+		return rep.Build(nil, gerr.ErrParamsInvlid, "用户名格式错误")
 	}
 
 	if len(l.Password) < 6 {
-		return rep.Build(nil, ecode.ParamsError, "密码长度不能小于6")
+		return rep.Build(nil, gerr.ErrParamsInvlid, "密码长度不能小于6")
 	}
 
 	return nil

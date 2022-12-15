@@ -1,9 +1,6 @@
 package error
 
 // type GError error
-import (
-	gerMsg "goblog/error/msg"
-)
 
 type GError struct {
 	raw  error
@@ -15,6 +12,7 @@ func NewWithCode(code int) *GError {
 
 	return &GError{
 		Code: code,
+		msg:  GetMsg(code),
 	}
 }
 
@@ -36,7 +34,7 @@ func New(args ...any) *GError {
 	}
 
 	if msg == "" {
-		msg = gerMsg.GetMsg(code)
+		msg = GetMsg(code)
 	}
 
 	return &GError{Code: code, msg: msg, raw: raw}

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	gerrors "goblog/error"
-	"goblog/error/code"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -61,13 +60,13 @@ func ParseToken(tokenString string) (*DefaultClaims, error) {
 	})
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet) {
-			return nil, gerrors.New(code.AuthExpired)
+			return nil, gerrors.NewWithCode(gerrors.ErrTokenExpired)
 		}
 	}
 	if claims, ok := token.Claims.(*DefaultClaims); ok && token.Valid {
 		return claims, nil
 	} else {
 
-		return nil, errors.New("token转换错误")
+		return nil, gerrors.NewWithCode(gerrors.ErrTokenInvalid)
 	}
 }

@@ -2,7 +2,7 @@ package user
 
 import (
 	"goblog/database/mysql"
-	"goblog/error/code"
+	gerr "goblog/error"
 	"goblog/rep"
 )
 
@@ -18,12 +18,12 @@ func (r *RegisterService) Register() *rep.Response {
 	res, er := stm.Exec(r.Name, r.Password)
 
 	if er != nil {
-		return rep.Build(nil, code.DB, "注册失败")
+		return rep.Build(nil, gerr.ErrDB, "注册失败")
 	}
 
 	id, er := res.LastInsertId()
 	if er != nil {
-		return rep.Build(nil, code.UnExpect, "注册失败")
+		return rep.Build(nil, gerr.ErrUnExpect, "注册失败")
 	}
 
 	return rep.BuildOkResponse(map[string]any{

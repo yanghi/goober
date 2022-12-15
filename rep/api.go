@@ -2,7 +2,6 @@ package rep
 
 import (
 	gerr "goblog/error"
-	ecode "goblog/error/code"
 )
 
 // api response
@@ -19,7 +18,7 @@ func Build(data any, code int, msg string) *Response {
 		Data: data,
 		Msg:  msg,
 		Code: code,
-		Ok:   code == ecode.Ok,
+		Ok:   code == gerr.ErrOk,
 	}
 
 	return &r
@@ -28,7 +27,7 @@ func Build(data any, code int, msg string) *Response {
 func BuildOkResponse(data any) *Response {
 	return &Response{
 		Data: data,
-		Code: ecode.Ok,
+		Code: gerr.ErrOk,
 		Msg:  "ok",
 		Ok:   true,
 	}
