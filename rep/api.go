@@ -24,6 +24,14 @@ func Build(data any, code int, msg string) *Response {
 	return &r
 }
 
+func FatalResponseWithCode(c int) *Response {
+	return &Response{
+		Code: c,
+		Msg:  gerr.GetMsg(c),
+		Ok:   false,
+	}
+}
+
 func BuildOkResponse(data any) *Response {
 	return &Response{
 		Data: data,

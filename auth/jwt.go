@@ -70,3 +70,12 @@ func ParseToken(tokenString string) (*DefaultClaims, error) {
 		return nil, gerrors.NewWithCode(gerrors.ErrTokenInvalid)
 	}
 }
+
+func GetUser(tokenString string) (*JwtUserClaims, error) {
+	claims, e := ParseToken(tokenString)
+	if e != nil {
+		return nil, e
+	}
+
+	return &JwtUserClaims{Username: claims.Username, Uid: claims.Uid}, nil
+}

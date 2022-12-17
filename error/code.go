@@ -25,4 +25,5 @@ const (
 
 	ErrTokenExpired = 401
 	ErrTokenInvalid = 402
+	ErrTokenMissing = 403
 )
