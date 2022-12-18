@@ -1,9 +1,11 @@
 package post
 
 import (
+	"encoding/json"
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
+	tag_service "goblog/service/tag"
 	"goblog/service/user"
 )
 
@@ -33,5 +35,30 @@ func (srv *GetPostService) Get() *rep.Response {
 
 	var u, _ = usrv.GetBaseInfoMap()
 	post["author"] = u
+
+	tagIds := []int{}
+
+	json.Unmarshal([]byte(post["tag"].(string)), &tagIds)
+
+	post["tag"] = tagIds
+
+	if len(tagIds) > 0 {
+		var tsrv = tag_service.GetTagListService{IdList: tagIds}
+
+		tagRes := tsrv.GetByIdList()
+
+		if tagRes.Ok {
+			var tagList = tagRes.Data.(map[string]any)["list"]
+			_, e := tagList.([]map[string]any)
+			if e {
+				post["tagList"] = tagList
+
+			} else {
+
+				post["tagList"] = []map[string]any{}
+			}
+		}
+	}
+
 	return rep.BuildOkResponse(post)
 }

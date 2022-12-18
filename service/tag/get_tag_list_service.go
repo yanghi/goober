@@ -5,13 +5,30 @@ import (
 	gerr "goblog/error"
 	"goblog/rep"
 	"strconv"
+	"strings"
 )
 
 type GetTagListService struct {
+	IdList []int `json:"idList" form:"idList"`
 }
 
 func (srv *GetTagListService) Get() *rep.Response {
-	rows, e := mysql.DB.Query("SELECT * FROM gb_post_tag")
+	return srv.get("")
+}
+func (srv *GetTagListService) GetByIdList() *rep.Response {
+	vals := []string{}
+
+	for _, v := range srv.IdList {
+		vals = append(vals, strconv.Itoa(v))
+	}
+
+	return srv.get("where id in (" + strings.Join(vals, ",") + ")")
+}
+
+func (srv *GetTagListService) get(queryPart string) *rep.Response {
+	// querys:=[]string{"SELECT * FROM gb_post_tag "}
+
+	rows, e := mysql.DB.Query("SELECT * FROM gb_post_tag " + queryPart)
 
 	if e != nil {
 		return rep.FatalResponseWithCode(gerr.ErrDB)

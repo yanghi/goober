@@ -1,6 +1,7 @@
 package post
 
 import (
+	"encoding/json"
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
@@ -23,11 +24,11 @@ type Tag struct {
 
 func (srv *CreatePostService) Run() *rep.Response {
 
-	// tagQs := tagQuerys(srv.Tag)
+	stm, _ := mysql.DB.Prepare("INSERT INTO gb_post (title,content,author_id,description,tag) VALUES(?,?,?,?,?)")
 
-	stm, _ := mysql.DB.Prepare("INSERT INTO gb_post (title,content,author_id,description) VALUES(?,?,?,?)")
+	tags, _ := json.Marshal(srv.Tags)
+	res, er := stm.Exec(srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags))
 
-	res, er := stm.Exec(srv.Title, srv.Content, srv.AuthorId, srv.Description)
 	if er != nil {
 		return rep.Build(nil, gerr.ErrUnExpect, "创建文章失败")
 	}

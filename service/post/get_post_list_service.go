@@ -1,11 +1,13 @@
 package post
 
 import (
+	"encoding/json"
 	"fmt"
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/model"
 	"goblog/rep"
+	tag_service "goblog/service/tag"
 	"strconv"
 )
 
@@ -27,10 +29,6 @@ func (srv *GetPostListService) GetByAuthor() *rep.Response {
 		return rep.FatalResponseWithCode(gerr.ErrDB)
 	}
 	ms, er := mysql.RowsToMap(rows)
-
-	if len(ms) == 0 {
-		return rep.Build(nil, gerr.ErrUnExpect, "文章不存在")
-	}
 
 	if er != nil {
 		return rep.Build(nil, gerr.ErrDB, "获取文章失败,数据转换失败")
@@ -59,6 +57,55 @@ func (srv *GetPostListService) Get() *rep.Response {
 	}
 
 	total, _ := strconv.Atoi(t[0]["total"].(string))
+
+	tagIdMap := map[int]int{}
+
+	for _, post := range ms {
+		tagIds := []int{}
+
+		if post["tag"] != nil {
+			json.Unmarshal([]byte(post["tag"].(string)), &tagIds)
+		}
+
+		post["tag"] = tagIds
+		post["tagList"] = []map[string]any{}
+
+		for _, id := range tagIds {
+			tagIdMap[id] = id
+		}
+	}
+	allTagIds := []int{}
+
+	for _, v := range tagIdMap {
+		allTagIds = append(allTagIds, v)
+	}
+	var tsrv = tag_service.GetTagListService{IdList: allTagIds}
+	tagRes := tsrv.GetByIdList()
+
+	if tagRes.Ok {
+		var tagList = tagRes.Data.(map[string]any)["list"]
+		list, ok := tagList.([]map[string]any)
+		if ok {
+			tabObjMap := map[int]any{}
+			for _, v := range list {
+				tabObjMap[v["id"].(int)] = v
+			}
+
+			for _, post := range ms {
+				tagIds := post["tag"].([]int)
+				tagList := []any{}
+
+				for _, tid := range tagIds {
+					tagObj, ok := tabObjMap[tid]
+					if ok {
+						tagList = append(tagList, tagObj)
+					}
+				}
+				post["tagList"] = tagList
+			}
+
+		}
+	}
 
 	return rep.BuildOkResponse(map[string]interface{}{
 		"total": total,

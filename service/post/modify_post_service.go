@@ -1,6 +1,7 @@
 package post
 
 import (
+	"encoding/json"
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
@@ -8,11 +9,12 @@ import (
 )
 
 type ModifyPostService struct {
-	Id          int    `json:"id"`
-	Content     string `json:"content"`
-	Title       string `json:"title"`
-	AuthorId    int    `json:"authorId"`
-	Description string `json:"desription"`
+	Id          int             `json:"id"`
+	Content     string          `json:"content"`
+	Title       string          `json:"title"`
+	AuthorId    int             `json:"authorId"`
+	Description string          `json:"desription"`
+	Tag         json.RawMessage `json:"tag"`
 }
 
 func (srv *ModifyPostService) Modify() *rep.Response {
@@ -27,6 +29,12 @@ func (srv *ModifyPostService) Modify() *rep.Response {
 	if srv.Title != "" {
 		fields = append(fields, "title=?")
 		values = append(values, srv.Title)
+	}
+
+	tagStr := string(srv.Tag)
+	if tagStr != "" {
+		fields = append(fields, "tag=?")
+		values = append(values, tagStr)
 	}
 
 	if len(fields) == 0 {
