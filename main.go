@@ -32,11 +32,13 @@ func main() {
 		v1.POST("/user/register", api.Register)
 		v1.POST("/user/login", api.Login)
 		v1.GET("/post/post", api.GetPost)
+		v1.GET("/post/list", api.GetPostList)
 
 		needAuth := v1.Group("/", middlewares.GetUserByToken(), middlewares.AuthRequired())
 
 		needAuth.POST("post/post", api.CreatePost)
 		needAuth.DELETE("post/post", api.DeletePostByAuthor)
+		needAuth.PUT("post/post", api.ModifyPost)
 
 	}
 

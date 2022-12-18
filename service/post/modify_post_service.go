@@ -4,9 +4,11 @@ import (
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
+	"strings"
 )
 
 type ModifyPostService struct {
+	Id          int    `json:"id"`
 	Content     string `json:"content"`
 	Title       string `json:"title"`
 	AuthorId    int    `json:"authorId"`
@@ -19,21 +21,23 @@ func (srv *ModifyPostService) Modify() *rep.Response {
 	var values []any
 
 	if srv.Content != "" {
-		fields = append(fields, "author_id")
+		fields = append(fields, "content=?")
 		values = append(values, srv.Content)
 	}
 	if srv.Title != "" {
-		fields = append(fields, "title")
+		fields = append(fields, "title=?")
 		values = append(values, srv.Title)
 	}
 
 	if len(fields) == 0 {
 		return rep.Build(nil, gerr.ErrUnExpect, "修改无有效字段")
 	}
-	rows, er := mysql.DB.Exec("DELETE FROM gb_post where author_id=? and id=?", values...)
-	// rows, er := stm.Query(srv.Title, srv.Content, srv.AuthorId, srv.Description, tagQs.vals)
+	values = append(values, srv.AuthorId, srv.Id)
+
+	rows, er := mysql.DB.Exec("UPDATE gb_post SET "+strings.Join(fields, ",")+" where author_id=? and id=?", values...)
+
 	if er != nil {
-		return rep.Build(nil, gerr.ErrUnExpect, "删除文章失败")
+		return rep.Build(nil, gerr.ErrUnExpect, "修改文章失败")
 	}
 	rowNum, _ := rows.RowsAffected()
 
