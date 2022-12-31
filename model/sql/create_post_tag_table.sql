@@ -1,6 +1,6 @@
 create table if not exists gb_post_tag(
 	id INT NOT NULL AUTO_INCREMENT,
-	text VARCHAR(64) NOT NULL COMMENT '标签名',
+	name VARCHAR(64) NOT NULL UNIQUE COMMENT '标签名',
 	create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 	PRIMARY KEY(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章标签表';

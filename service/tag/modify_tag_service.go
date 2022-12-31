@@ -7,12 +7,12 @@ import (
 )
 
 type ModifyTagService struct {
-	Text string `json:"text"`
+	Name string `json:"name"`
 	Id   int    `json:"id"`
 }
 
 func (srv *ModifyTagService) Modify() *rep.Response {
-	res, er := mysql.DB.Exec("UPDATE gb_post_tag SET text=? where id=?", srv.Text, srv.Id)
+	res, er := mysql.DB.Exec("UPDATE gb_post_tag SET name=? where id=?", srv.Name, srv.Id)
 	if er != nil {
 		return rep.Build(nil, gerr.ErrUnExpect, "修改标签失败")
 	}

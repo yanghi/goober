@@ -1,6 +1,7 @@
 package user
 
 import (
+	"goblog/auth"
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
@@ -9,7 +10,7 @@ import (
 )
 
 type LoginService struct {
-	Name     string `form:"name" json:"name" binding:"required,min=5,max=30"`
+	Name     string `form:"name" json:"name" binding:"required,min=2,max=30"`
 	Password string `form:"password" json:"password" binding:"required,min=6,max=30"`
 }
 
@@ -19,9 +20,7 @@ func (l *LoginService) Login() *rep.Response {
 		return r
 	}
 
-	stm, _ := mysql.DB.Prepare("select id,name,time from gb_user where BINARY name=? and password=MD5(?);")
-
-	rows, er := stm.Query(l.Name, l.Password)
+	rows, er := mysql.DB.Query("select * from gb_user where BINARY name=?", l.Name)
 
 	if er != nil {
 		return rep.BuildFatalResponse(er)
@@ -33,11 +32,22 @@ func (l *LoginService) Login() *rep.Response {
 	}
 
 	if len(ms) == 0 {
-		return rep.Build(nil, gerr.ErrUnExpect, "账号或密码错误")
+		return rep.Build(nil, gerr.ErrUnExpect, "账号不存在")
 	}
 
+	user := ms[0]
+
+	passwordCorrect := auth.Validate(l.Password, user["salt"].(string), user["password"].(string))
+
+	if !passwordCorrect {
+		return rep.Build(nil, gerr.ErrParamsInvlid, "密码错误")
+	}
+
+	delete(user, "salt")
+	delete(user, "password")
+
 	return rep.BuildOkResponse(map[string]any{
-		"user": ms[0],
+		"user": user,
 	})
 }
 
