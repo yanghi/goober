@@ -8,7 +8,9 @@ import (
 	"goblog/model"
 	"goblog/model/post"
 	"goblog/rep"
+	"goblog/serializer"
 	tag_service "goblog/service/tag"
+	user_service "goblog/service/user"
 	"strconv"
 
 	"github.com/huandu/go-sqlbuilder"
@@ -76,9 +78,22 @@ func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where stri
 	total, _ := strconv.Atoi(t[0]["total"].(string))
 
 	tagIdMap := map[int]int{}
+	authorIdMap := map[int]int{}
 
 	for _, post := range ms {
+
+		// 格式化
+		id, _ := strconv.Atoi(post["id"].(string))
+		post["id"] = id
+		statu, _ := strconv.Atoi(post["statu"].(string))
+
+		post["statu"] = statu
+		author_id, _ := strconv.Atoi(post["author_id"].(string))
+		post["authorId"] = author_id
+
 		tagIds := []int{}
+
+		authorIdMap[author_id] = author_id
 
 		if post["tag"] != nil {
 			json.Unmarshal([]byte(post["tag"].(string)), &tagIds)
@@ -87,24 +102,28 @@ func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where stri
 		post["tag"] = tagIds
 		post["tagList"] = []map[string]any{}
 
-		id, _ := strconv.Atoi(post["id"].(string))
-		post["id"] = id
-		statu, _ := strconv.Atoi(post["statu"].(string))
-
-		post["statu"] = statu
-		author_id, _ := strconv.Atoi(post["author_id"].(string))
-		post["authorId"] = author_id
 		delete(post, "author_id")
+
+		if post["description"].(string) == "" {
+			post["description"] = serializer.Post.ExtractMarkdownDescription(post["content"].(string))
+		}
+		delete(post, "content")
 
 		for _, id := range tagIds {
 			tagIdMap[id] = id
 		}
 	}
 	allTagIds := []int{}
+	allAuthorIds := []int{}
 
 	for _, v := range tagIdMap {
 		allTagIds = append(allTagIds, v)
 	}
+
+	for _, v := range authorIdMap {
+		allAuthorIds = append(allAuthorIds, v)
+	}
+
 	var tsrv = tag_service.GetTagListService{IdList: allTagIds}
 	tagRes := tsrv.GetByIdList()
 
@@ -130,6 +149,26 @@ func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where stri
 				post["tagList"] = tagList
 			}
 
+		}
+	}
+
+	var usrv = user_service.GetUserService{IdList: allAuthorIds}
+
+	userList, e := usrv.GetUserBaseInfoListRaw()
+
+	if e == nil {
+		userMap := map[int]any{}
+
+		for _, v := range userList {
+			userMap[int(v["id"].(int64))] = v
+		}
+
+		for _, v := range ms {
+			user, ok := userMap[v["authorId"].(int)]
+
+			if ok {
+				v["author"] = user
+			}
 		}
 	}
 

@@ -38,6 +38,7 @@ func main() {
 		needAuth := v1.Group("/", middlewares.GetUserByToken(), middlewares.AuthRequired())
 
 		needAuth.GET("user/post/list", api.GetUserPostList)
+		needAuth.GET("user/info/base", api.GetUserBaseInfo)
 
 		needAuth.GET("tag/list", api.TagGetList)
 		needAuth.POST("tag/tag", api.TagCreate)

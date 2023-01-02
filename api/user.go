@@ -62,3 +62,12 @@ func Login(c *gin.Context) {
 	}
 
 }
+
+func GetUserBaseInfo(c *gin.Context) {
+	var service user.GetUserService
+
+	var u, _ = c.Get("user")
+	service.Id = int(u.(*auth.JwtUserClaims).Uid)
+
+	c.JSON(200, service.GetBaseInfo())
+}

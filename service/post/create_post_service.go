@@ -5,6 +5,7 @@ import (
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
+	"goblog/serializer"
 )
 
 type CreatePostService struct {
@@ -27,6 +28,10 @@ func (srv *CreatePostService) Run() *rep.Response {
 	stm, _ := mysql.DB.Prepare("INSERT INTO gb_post (title,content,author_id,description,tag) VALUES(?,?,?,?,?)")
 
 	tags, _ := json.Marshal(srv.Tags)
+
+	if srv.Description == "" {
+		srv.Description = serializer.Post.ExtractMarkdownDescription(srv.Content)
+	}
 	res, er := stm.Exec(srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags))
 
 	if er != nil {

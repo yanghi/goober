@@ -1,6 +1,7 @@
 package post
 
 import (
+	"fmt"
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
@@ -12,16 +13,14 @@ type DeletePostService struct {
 }
 
 func (srv *DeletePostService) DeleteByAuthor() *rep.Response {
-
-	// tagQs := tagQuerys(srv.Tag)
-
 	rows, er := mysql.DB.Exec("DELETE FROM gb_post where author_id=? and id=?", srv.AuthorId, srv.Id)
-	// rows, er := stm.Query(srv.Title, srv.Content, srv.AuthorId, srv.Description, tagQs.vals)
+
 	if er != nil {
 		return rep.Build(nil, gerr.ErrUnExpect, "删除文章失败")
 	}
 	rowNum, _ := rows.RowsAffected()
 
+	fmt.Println("sss", srv.AuthorId, srv.Id)
 	if rowNum == 0 {
 		return rep.Build(nil, gerr.ErrUnExpect, "文章不存在或无权限")
 	}

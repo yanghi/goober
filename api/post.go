@@ -46,6 +46,16 @@ func DeletePostByAuthor(c *gin.Context) {
 		return
 	}
 
+	var id = c.Query("id")
+	pid, e := strconv.Atoi(id)
+
+	if e != nil {
+		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.Abort()
+		return
+	}
+	service.Id = pid
+
 	c.JSON(200, service.DeleteByAuthor())
 }
 
