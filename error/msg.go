@@ -10,6 +10,7 @@ func init() {
 	em[ErrUnknown] = "未知错误"
 	em[ErrTokenExpired] = "token已过期"
 	em[ErrTokenInvalid] = "无效token"
+	em[ErrTokenMissing] = "缺少token"
 }
 func GetMsg(c int) string {
 	msg, k := em[c]

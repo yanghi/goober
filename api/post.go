@@ -5,6 +5,7 @@ import (
 	"goblog/auth"
 	gerr "goblog/error"
 	"goblog/model"
+	postmodel "goblog/model/post"
 	"goblog/rep"
 	"goblog/service/post"
 	"strconv"
@@ -81,6 +82,34 @@ func GetPostList(c *gin.Context) {
 	service.PaginationParams = *pg.Query(pq)
 
 	c.JSON(200, service.Get())
+}
+
+func GetUserPostList(c *gin.Context) {
+	var service post.GetPostListService
+
+	var u, _ = c.Get("user")
+	service.AuthorId = int(u.(*auth.JwtUserClaims).Uid)
+
+	var statuQuery = c.Query("statu")
+
+	if statuQuery != "" {
+		statu, e := strconv.Atoi(statuQuery)
+		if e == nil {
+			service.Statu = postmodel.IToPostStatu(statu)
+		} else {
+			service.Statu = postmodel.PostStatuNotExsit
+		}
+	} else {
+		service.Statu = postmodel.PostStatuNotExsit
+	}
+
+	pq := model.PaginationQuery{}
+
+	c.ShouldBindQuery(&pq)
+	pg := model.Pagination{}
+	service.PaginationParams = *pg.Query(pq)
+
+	c.JSON(200, service.GetByAuthor())
 }
 
 func ModifyPost(c *gin.Context) {

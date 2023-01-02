@@ -38,7 +38,11 @@ func (srv *GetPostService) Get() *rep.Response {
 
 	tagIds := []int{}
 
-	json.Unmarshal([]byte(post["tag"].(string)), &tagIds)
+	if post["tag"] != nil {
+		json.Unmarshal([]byte(post["tag"].(string)), &tagIds)
+	} else {
+		post["tagList"] = []any{}
+	}
 
 	post["tag"] = tagIds
 

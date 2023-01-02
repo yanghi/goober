@@ -13,6 +13,8 @@ func GetUserByToken() gin.HandlerFunc {
 		token := ctx.GetHeader("Authorization")
 		if token == "" {
 			ctx.JSON(200, rep.FatalResponseWithCode(error.ErrTokenMissing))
+			ctx.Abort()
+			return
 		}
 
 		user, e := auth.GetUser(token)

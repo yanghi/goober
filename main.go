@@ -27,6 +27,7 @@ func main() {
 	r := gin.Default()
 	// r := gin.New()
 
+	r.Use(middlewares.Cors())
 	v1 := r.Group("/api/v1")
 	{
 		v1.POST("/user/register", api.Register)
@@ -35,6 +36,8 @@ func main() {
 		v1.GET("/post/list", api.GetPostList)
 
 		needAuth := v1.Group("/", middlewares.GetUserByToken(), middlewares.AuthRequired())
+
+		needAuth.GET("user/post/list", api.GetUserPostList)
 
 		needAuth.GET("tag/list", api.TagGetList)
 		needAuth.POST("tag/tag", api.TagCreate)
