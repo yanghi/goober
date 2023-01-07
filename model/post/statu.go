@@ -1,5 +1,7 @@
 package post
 
+import "strconv"
+
 type PostStatu int
 
 const (
@@ -23,4 +25,7 @@ func itoPostStatu(i int, d PostStatu) PostStatu {
 	}
 
 	return d
+}
+func PostStatuToStr(s PostStatu) string {
+	return strconv.Itoa(int(s))
 }

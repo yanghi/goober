@@ -32,7 +32,7 @@ func main() {
 	{
 		v1.POST("/user/register", api.Register)
 		v1.POST("/user/login", api.Login)
-		v1.GET("/post/post", api.GetPost)
+		v1.GET("/post/post", middlewares.TryGetUserByToken(), api.GetPost)
 		v1.GET("/post/list", api.GetPostList)
 		v1.PUT("/post/action/view", api.PostActionView)
 

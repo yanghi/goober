@@ -28,12 +28,13 @@ func (srv *GetPostListService) GetByAuthor() *rep.Response {
 	sql := sqlbuilder.Select("*").From("gb_post").Where(where)
 
 	if srv.Statu != post.PostStatuNotExsit {
-		w2 := "statu=" + strconv.Itoa(int(post.PostStatuPublic))
+		w2 := "statu=" + strconv.Itoa(int(srv.Statu))
 		sql.Where(w2)
 
 		where += " and " + w2
 
 	}
+	fmt.Println("gulist", where, srv.Statu)
 
 	return srv.get(sql, where)
 }

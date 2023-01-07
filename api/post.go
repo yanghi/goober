@@ -18,7 +18,6 @@ func CreatePost(c *gin.Context) {
 
 	var u, _ = c.Get("user")
 
-	fmt.Println("gggg", u)
 	service.AuthorId = int(u.(*auth.JwtUserClaims).Uid)
 
 	e := c.ShouldBind(&service)
@@ -79,7 +78,15 @@ func GetPost(c *gin.Context) {
 
 	service.Id = id
 
-	c.JSON(200, service.Get())
+	u, _ := c.Get("user")
+
+	if u != nil {
+		service.UserId = int(u.(*auth.JwtUserClaims).Uid)
+		c.JSON(200, service.GetByUser())
+	} else {
+		c.JSON(200, service.Get())
+	}
+
 }
 
 func GetPostList(c *gin.Context) {
@@ -124,6 +131,7 @@ func GetUserPostList(c *gin.Context) {
 
 func ModifyPost(c *gin.Context) {
 	var service post.ModifyPostService
+	service.Statu = postmodel.PostStatuNotExsit
 
 	var u, _ = c.Get("user")
 

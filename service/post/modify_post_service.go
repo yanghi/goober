@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"goblog/database/mysql"
 	gerr "goblog/error"
+	"goblog/model/post"
 	"goblog/rep"
 	"goblog/serializer"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -18,6 +20,7 @@ type ModifyPostService struct {
 	AuthorId    int             `json:"authorId"`
 	Description string          `json:"description"`
 	Tag         json.RawMessage `json:"tag"`
+	Statu       post.PostStatu
 }
 
 func (srv *ModifyPostService) Modify() *rep.Response {
@@ -47,6 +50,11 @@ func (srv *ModifyPostService) Modify() *rep.Response {
 	if tagStr != "" && tagStr != "null" {
 		fields = append(fields, "tag=?")
 		values = append(values, tagStr)
+	}
+
+	if srv.Statu != post.PostStatuNotExsit {
+		fields = append(fields, "statu=?")
+		values = append(values, strconv.Itoa(int(srv.Statu)))
 	}
 
 	if len(fields) == 0 {

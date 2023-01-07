@@ -9,19 +9,30 @@ import (
 )
 
 func GetUserByToken() gin.HandlerFunc {
+	return getUserByToken(true)
+}
+func TryGetUserByToken() gin.HandlerFunc {
+	return getUserByToken(false)
+}
+
+func getUserByToken(requiredToken bool) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := ctx.GetHeader("Authorization")
 		if token == "" {
-			ctx.JSON(200, rep.FatalResponseWithCode(error.ErrTokenMissing))
-			ctx.Abort()
+			if requiredToken {
+				ctx.JSON(200, rep.FatalResponseWithCode(error.ErrTokenMissing))
+				ctx.Abort()
+			}
 			return
 		}
 
 		user, e := auth.GetUser(token)
 
 		if e != nil {
-			ctx.JSON(200, rep.FatalResponseWithGError(*e))
-			ctx.Abort()
+			if requiredToken {
+				ctx.JSON(200, rep.FatalResponseWithGError(*e))
+				ctx.Abort()
+			}
 			return
 		}
 

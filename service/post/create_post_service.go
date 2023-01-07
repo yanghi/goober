@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"goblog/database/mysql"
 	gerr "goblog/error"
+	"goblog/model/post"
 	"goblog/rep"
 	"goblog/serializer"
 )
 
 type CreatePostService struct {
-	Content     string `json:"content"`
-	Title       string `json:"title"`
-	AuthorId    int    `json:"authorId"`
-	Description string `json:"desription"`
-	Tags        []int  `json:"tags"`
+	Content     string         `json:"content"`
+	Title       string         `json:"title"`
+	AuthorId    int            `json:"authorId"`
+	Description string         `json:"desription"`
+	Tags        []int          `json:"tags"`
+	Statu       post.PostStatu `json:"statu"`
 }
 type CreatePostResult struct {
 	Id int64 `json:"id"`
@@ -26,14 +28,15 @@ type Tag struct {
 
 func (srv *CreatePostService) Run() *rep.Response {
 
-	stm, _ := mysql.DB.Prepare("INSERT INTO gb_post (title,content,author_id,description,tag) VALUES(?,?,?,?,?)")
+	stm, _ := mysql.DB.Prepare("INSERT INTO gb_post (title,content,author_id,description,tag,statu) VALUES(?,?,?,?,?,?)")
 
 	tags, _ := json.Marshal(srv.Tags)
 
 	if srv.Description == "" {
 		srv.Description = serializer.Post.ExtractMarkdownDescription(srv.Content)
 	}
-	res, er := stm.Exec(srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags))
+
+	res, er := stm.Exec(srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags), srv.Statu)
 
 	if er != nil {
 		fmt.Println("create post error:", er.Error())
