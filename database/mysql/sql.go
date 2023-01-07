@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"time"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -33,7 +31,6 @@ func New() *sql.DB {
 		panic(err)
 	}
 
-	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(conf.MaxOpenConns)
 	db.SetMaxIdleConns(conf.MaxIdleConns)
 	DB = db
@@ -99,8 +96,8 @@ func QueryToJSON(db *sql.DB, query string) (string, error) {
 func init() {
 	Config(MysqlConf{
 		DataSourceName: "root:OLIqMjYR0Gkg6eyJ@/test_blog",
-		MaxOpenConns:   10,
-		MaxIdleConns:   10,
+		MaxOpenConns:   200,
+		MaxIdleConns:   100,
 	})
 	fmt.Println("init slq", conf.DataSourceName)
 }
