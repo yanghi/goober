@@ -8,24 +8,22 @@ import (
 	// serv "goblog/service"
 	// "net/http"
 
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 )
 
-// 基本用户信息
-type User struct {
-	Id    int64  `json:"id"`
-	Name  string `json:"name"`
-	Avtar string `json:"avtar"`
-}
-
-type UserParams struct {
-	Uid int `json:"uid"`
+type ServerConfig struct {
 }
 
 func main() {
 	mysql.New()
 	r := gin.Default()
 	// r := gin.New()
+
+	var usePprof = false
+	if usePprof {
+		pprof.Register(r)
+	}
 
 	r.Use(middlewares.Cors())
 	v1 := r.Group("/api/v1")
