@@ -20,7 +20,8 @@ func GetUserByToken() gin.HandlerFunc {
 		user, e := auth.GetUser(token)
 
 		if e != nil {
-			ctx.JSON(200, rep.BuildFatalResponse(e))
+			ctx.JSON(200, rep.FatalResponseWithGError(*e))
+			ctx.Abort()
 			return
 		}
 

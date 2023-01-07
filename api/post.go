@@ -138,3 +138,18 @@ func ModifyPost(c *gin.Context) {
 
 	c.JSON(200, service.Modify())
 }
+
+func PostActionView(c *gin.Context) {
+	var id = c.Query("id")
+	pid, e := strconv.Atoi(id)
+
+	if e != nil {
+		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.Abort()
+		return
+	}
+
+	var srv = post.ActionPostService{Id: pid}
+
+	c.JSON(200, srv.View())
+}

@@ -1,10 +1,17 @@
 package serializer
 
 import (
+	"bufio"
+	"bytes"
+	"io"
+	"io/ioutil"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/russross/blackfriday"
+	"golang.org/x/net/html/charset"
+	"golang.org/x/text/encoding"
+	"golang.org/x/text/transform"
 )
 
 type postSerializer struct {
@@ -74,5 +81,31 @@ func stripHtmlTags(s string) string {
 	s = builder.String()
 	return s
 }
+func (ps *postSerializer) DecodeContent(s string) ([]byte, error) {
+	var reader = DecodeEncoding(bytes.NewReader([]byte(s)))
+	d, e := ioutil.ReadAll(reader)
+	if e != nil {
+		return nil, e
+	}
+
+	return d, nil
+}
 
 var Post = postSerializer{extractDescriptionSize: 300}
+
+// 将对应格式文本转换成utf-8
+func DecodeEncoding(r io.Reader) *transform.Reader {
+	e := determineEncodeing(r)
+	return transform.NewReader(r, e.NewDecoder())
+}
+
+// 判断传输来的文本的字符集格式是什么
+func determineEncodeing(r io.Reader) encoding.Encoding {
+	peek, err := bufio.NewReader(r).Peek(1024)
+	if err != nil {
+		panic(err)
+	}
+	determineEncoding, _, _ := charset.DetermineEncoding(peek, "")
+
+	return determineEncoding
+}

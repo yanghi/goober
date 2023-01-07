@@ -2,6 +2,7 @@ package post
 
 import (
 	"encoding/json"
+	"fmt"
 	"goblog/database/mysql"
 	gerr "goblog/error"
 	"goblog/rep"
@@ -35,6 +36,7 @@ func (srv *CreatePostService) Run() *rep.Response {
 	res, er := stm.Exec(srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags))
 
 	if er != nil {
+		fmt.Println("create post error:", er.Error())
 		return rep.Build(nil, gerr.ErrUnExpect, "创建文章失败")
 	}
 	id, er := res.LastInsertId()

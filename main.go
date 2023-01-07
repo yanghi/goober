@@ -34,11 +34,14 @@ func main() {
 		v1.POST("/user/login", api.Login)
 		v1.GET("/post/post", api.GetPost)
 		v1.GET("/post/list", api.GetPostList)
+		v1.PUT("/post/action/view", api.PostActionView)
 
 		needAuth := v1.Group("/", middlewares.GetUserByToken(), middlewares.AuthRequired())
 
 		needAuth.GET("user/post/list", api.GetUserPostList)
+
 		needAuth.GET("user/info/base", api.GetUserBaseInfo)
+		needAuth.PUT("user/info/info", api.ModifyUserInfo)
 
 		needAuth.GET("tag/list", api.TagGetList)
 		needAuth.POST("tag/tag", api.TagCreate)

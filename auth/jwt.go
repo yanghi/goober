@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	gerrors "goblog/error"
@@ -54,12 +55,14 @@ func GenToken(username string, uid int64) (string, error) {
 	return token.SignedString(conf.SignedKey)
 }
 
-func ParseToken(tokenString string) (*DefaultClaims, error) {
+func ParseToken(tokenString string) (*DefaultClaims, *gerrors.GError) {
 	token, err := jwt.ParseWithClaims(tokenString, &DefaultClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return conf.SignedKey, nil
 	})
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet) {
+			e := gerrors.NewWithCode(gerrors.ErrTokenExpired)
+			fmt.Println("c ge", e, e.Code)
 			return nil, gerrors.NewWithCode(gerrors.ErrTokenExpired)
 		}
 	}
@@ -71,9 +74,10 @@ func ParseToken(tokenString string) (*DefaultClaims, error) {
 	}
 }
 
-func GetUser(tokenString string) (*JwtUserClaims, error) {
+func GetUser(tokenString string) (*JwtUserClaims, *gerrors.GError) {
 	claims, e := ParseToken(tokenString)
 	if e != nil {
+		fmt.Println("get user", e, e.Code)
 		return nil, e
 	}
 

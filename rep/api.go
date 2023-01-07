@@ -31,6 +31,13 @@ func FatalResponseWithCode(c int) *Response {
 		Ok:   false,
 	}
 }
+func FatalResponseWithGError(err gerr.GError) *Response {
+	return &Response{
+		Code: err.Code,
+		Msg:  err.Msg(),
+		Ok:   false,
+	}
+}
 
 func BuildOkResponse(data any) *Response {
 	return &Response{
@@ -46,11 +53,13 @@ func BuildFatalResponse(e any) *Response {
 
 	switch e.(type) {
 	case string:
-	case error:
-		ge = *gerr.New(e)
 	case gerr.GError:
 		ge = e.(gerr.GError)
+	case error:
+		ge = *gerr.New(e)
+
 	}
+	ge = *gerr.New(e)
 
 	return &Response{
 		Msg:  ge.Msg(),

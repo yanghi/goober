@@ -85,8 +85,10 @@ func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where stri
 		// 格式化
 		id, _ := strconv.Atoi(post["id"].(string))
 		post["id"] = id
-		statu, _ := strconv.Atoi(post["statu"].(string))
 
+		view, _ := strconv.Atoi(post["view"].(string))
+		post["view"] = view
+		statu, _ := strconv.Atoi(post["statu"].(string))
 		post["statu"] = statu
 		author_id, _ := strconv.Atoi(post["author_id"].(string))
 		post["authorId"] = author_id
@@ -172,12 +174,18 @@ func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where stri
 		}
 	}
 
+	totalPages := total / p.Size
+
+	if total%p.Size != 0 {
+		totalPages++
+	}
+
 	return rep.BuildOkResponse(map[string]interface{}{
 		"total":      total,
 		"page":       p.Page,
 		"size":       p.Size,
 		"order":      p.Order,
 		"list":       ms,
-		"totalPages": total / p.Size,
+		"totalPages": totalPages,
 	})
 }

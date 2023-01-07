@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"goblog/auth"
+	gerr "goblog/error"
 	"goblog/rep"
 	"goblog/service/user"
 
@@ -70,4 +71,21 @@ func GetUserBaseInfo(c *gin.Context) {
 	service.Id = int(u.(*auth.JwtUserClaims).Uid)
 
 	c.JSON(200, service.GetBaseInfo())
+}
+
+func ModifyUserInfo(c *gin.Context) {
+	var service user.ModifyUserInfoService
+
+	e := c.ShouldBind(&service)
+
+	if e != nil {
+		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.Abort()
+		return
+	}
+
+	var u, _ = c.Get("user")
+	service.Id = int(u.(*auth.JwtUserClaims).Uid)
+
+	c.JSON(200, service.Modify())
 }

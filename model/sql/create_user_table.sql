@@ -5,5 +5,6 @@ create table if not exists gb_user(
 	salt VARCHAR(64) NOT NULL COMMENT '盐',
 	create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 	type INT NOT NULL DEFAULT 0 COMMENT '用户类型,0普通用户,1管理员',
+	avatar_url VARCHAR(255) COMMENT '头像链接'
 	PRIMARY KEY(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表'; 

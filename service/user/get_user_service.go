@@ -17,7 +17,7 @@ type GetUserService struct {
 type BaseUserMap map[string]interface{}
 
 func (l *GetUserService) GetBaseInfoMap() (map[string]interface{}, error) {
-	rows, er := mysql.DB.Query("select id,name from gb_user where id=?", l.Id)
+	rows, er := mysql.DB.Query("select id,name,avatar_url as avatar from gb_user where id=?", l.Id)
 
 	if er != nil {
 		return nil, er
@@ -53,7 +53,7 @@ func (srv *GetUserService) GetUserBaseInfoListRaw() ([]map[string]interface{}, e
 		}
 	}
 
-	rows, er := mysql.DB.Query("select id,name from gb_user where id in (?)", ids)
+	rows, er := mysql.DB.Query("select id,name,avatar_url as avatar from gb_user where id in (?)", ids)
 
 	if er != nil {
 		return nil, er
