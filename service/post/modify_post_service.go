@@ -19,7 +19,7 @@ type ModifyPostService struct {
 	Title       string          `json:"title"`
 	AuthorId    int             `json:"authorId"`
 	Description string          `json:"description"`
-	Tag         json.RawMessage `json:"tag"`
+	Tags        json.RawMessage `json:"tags"`
 	Statu       post.PostStatu
 }
 
@@ -46,9 +46,9 @@ func (srv *ModifyPostService) Modify() *rep.Response {
 		values = append(values, srv.Title)
 	}
 
-	tagStr := string(srv.Tag)
+	tagStr := string(srv.Tags)
 	if tagStr != "" && tagStr != "null" {
-		fields = append(fields, "tag=?")
+		fields = append(fields, "tags=?")
 		values = append(values, tagStr)
 	}
 

@@ -28,15 +28,17 @@ type Tag struct {
 
 func (srv *CreatePostService) Run() *rep.Response {
 
-	stm, _ := mysql.DB.Prepare("INSERT INTO gb_post (title,content,author_id,description,tag,statu) VALUES(?,?,?,?,?,?)")
-
 	tags, _ := json.Marshal(srv.Tags)
 
 	if srv.Description == "" {
 		srv.Description = serializer.Post.ExtractMarkdownDescription(srv.Content)
 	}
-
-	res, er := stm.Exec(srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags), srv.Statu)
+	fmt.Println("createpost srv", srv)
+	fmt.Println("createpost data", srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags), srv.Statu)
+	res, er := mysql.DB.Exec(
+		"INSERT INTO gb_post (title,content,author_id,description,tags,statu) VALUES(?,?,?,?,?,?)",
+		srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags), srv.Statu,
+	)
 
 	if er != nil {
 		fmt.Println("create post error:", er.Error())
