@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"goblog/api"
+	"goblog/config"
 	mysql "goblog/database/mysql"
 	"goblog/router/middlewares"
+	"os"
 
 	// serv "goblog/service"
 	// "net/http"
@@ -16,11 +19,25 @@ type ServerConfig struct {
 }
 
 func main() {
-	mysql.New()
-	r := gin.Default()
-	// r := gin.New()
 
-	var usePprof = false
+	var r *gin.Engine
+	var mode = os.Getenv("GB_MODE")
+	fmt.Println("use env", os.Getenv("GB_MODE"))
+	// load configuration
+	config.LoadConfig()
+
+	mysql.New(config.AppConf.MySql)
+
+	if mode == "prod" || config.AppConf.Mode == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+		r = gin.New()
+	} else {
+		gin.SetMode(gin.DebugMode)
+		r = gin.Default()
+	}
+
+	var usePprof = config.AppConf.Debug.Pprof
+
 	if usePprof {
 		pprof.Register(r)
 	}

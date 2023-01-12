@@ -5,25 +5,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"goblog/config"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type MysqlConf struct {
-	DataSourceName string
-	MaxOpenConns   int
-	MaxIdleConns   int
-}
-
-var conf MysqlConf
 var DB *sql.DB
 
-// 设置配置
-func Config(c MysqlConf) {
-	conf = c
-}
-
-func New() *sql.DB {
+func New(conf config.MysqlConf) *sql.DB {
 	db, err := sql.Open("mysql", conf.DataSourceName)
 
 	if err != nil {
@@ -90,14 +79,4 @@ func QueryToJSON(db *sql.DB, query string) (string, error) {
 	}
 
 	return string(j), nil
-}
-
-// todo 配置化
-func init() {
-	Config(MysqlConf{
-		DataSourceName: "root:OLIqMjYR0Gkg6eyJ@/test_blog",
-		MaxOpenConns:   200,
-		MaxIdleConns:   100,
-	})
-	fmt.Println("init slq", conf.DataSourceName)
 }
