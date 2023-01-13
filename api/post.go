@@ -2,12 +2,12 @@ package api
 
 import (
 	"fmt"
-	"goblog/auth"
-	gerr "goblog/error"
-	"goblog/model"
-	postmodel "goblog/model/post"
-	"goblog/rep"
-	"goblog/service/post"
+	"goober/auth"
+	gerr "goober/error"
+	"goober/model"
+	postmodel "goober/model/post"
+	"goober/rep"
+	"goober/service/post"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

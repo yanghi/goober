@@ -32,5 +32,4 @@ func initConfig() {
 		fmt.Println("app conf unmarshal: error", e)
 	}
 
-	fmt.Println("appconf", AppConf.MySql)
 }

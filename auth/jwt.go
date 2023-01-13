@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	gerrors "goblog/error"
+	gerrors "goober/error"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -46,7 +46,7 @@ func GenToken(username string, uid int64) (string, error) {
 		},
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(conf.Expire)),
-			Issuer:    "goblog",
+			Issuer:    "goober",
 		},
 	}
 	//使用指定的签名方法创建签名对象

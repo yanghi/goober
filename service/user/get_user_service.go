@@ -1,9 +1,9 @@
 package user
 
 import (
-	"goblog/database/mysql"
-	gerr "goblog/error"
-	"goblog/rep"
+	"goober/database/mysql"
+	gerr "goober/error"
+	"goober/rep"
 	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"

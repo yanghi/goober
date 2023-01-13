@@ -1,9 +1,9 @@
 package middlewares
 
 import (
-	"goblog/auth"
-	"goblog/error"
-	"goblog/rep"
+	"goober/auth"
+	"goober/error"
+	"goober/rep"
 
 	"github.com/gin-gonic/gin"
 )

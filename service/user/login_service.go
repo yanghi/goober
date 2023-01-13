@@ -1,10 +1,10 @@
 package user
 
 import (
-	"goblog/auth"
-	"goblog/database/mysql"
-	gerr "goblog/error"
-	"goblog/rep"
+	"goober/auth"
+	"goober/database/mysql"
+	gerr "goober/error"
+	"goober/rep"
 
 	_ "github.com/go-sql-driver/mysql"
 )

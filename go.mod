@@ -1,4 +1,4 @@
-module goblog
+module goober
 
 go 1.18
 

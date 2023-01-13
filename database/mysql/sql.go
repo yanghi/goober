@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"goblog/config"
+	"goober/config"
 
 	_ "github.com/go-sql-driver/mysql"
 )

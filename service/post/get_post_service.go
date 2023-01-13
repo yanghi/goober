@@ -3,12 +3,12 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"goblog/database/mysql"
-	gerr "goblog/error"
-	"goblog/model/post"
-	"goblog/rep"
-	tag_service "goblog/service/tag"
-	"goblog/service/user"
+	"goober/database/mysql"
+	gerr "goober/error"
+	"goober/model/post"
+	"goober/rep"
+	tag_service "goober/service/tag"
+	"goober/service/user"
 	"strconv"
 
 	"github.com/huandu/go-sqlbuilder"

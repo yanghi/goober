@@ -1,9 +1,9 @@
 package tag_service
 
 import (
-	"goblog/database/mysql"
-	gerr "goblog/error"
-	"goblog/rep"
+	"goober/database/mysql"
+	gerr "goober/error"
+	"goober/rep"
 	"strconv"
 	"strings"
 )

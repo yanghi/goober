@@ -1,7 +1,7 @@
 package rep
 
 import (
-	gerr "goblog/error"
+	gerr "goober/error"
 )
 
 // api response

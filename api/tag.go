@@ -2,9 +2,9 @@ package api
 
 import (
 	"fmt"
-	gerr "goblog/error"
-	"goblog/rep"
-	tag_service "goblog/service/tag"
+	gerr "goober/error"
+	"goober/rep"
+	tag_service "goober/service/tag"
 
 	"github.com/gin-gonic/gin"
 )

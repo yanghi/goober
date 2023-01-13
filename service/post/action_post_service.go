@@ -1,9 +1,9 @@
 package post
 
 import (
-	"goblog/database/mysql"
-	gerr "goblog/error"
-	"goblog/rep"
+	"goober/database/mysql"
+	gerr "goober/error"
+	"goober/rep"
 )
 
 type ActionPostService struct {

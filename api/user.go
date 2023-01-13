@@ -2,10 +2,10 @@ package api
 
 import (
 	"fmt"
-	"goblog/auth"
-	gerr "goblog/error"
-	"goblog/rep"
-	"goblog/service/user"
+	"goober/auth"
+	gerr "goober/error"
+	"goober/rep"
+	"goober/service/user"
 
 	"github.com/gin-gonic/gin"
 )

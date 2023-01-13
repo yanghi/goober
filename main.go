@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"goblog/api"
-	"goblog/config"
-	mysql "goblog/database/mysql"
-	"goblog/router/middlewares"
+	"goober/api"
+	"goober/config"
+	mysql "goober/database/mysql"
+	"goober/router/middlewares"
 	"os"
 
-	// serv "goblog/service"
+	// serv "goober/service"
 	// "net/http"
 
 	"github.com/gin-contrib/pprof"
