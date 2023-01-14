@@ -11,4 +11,4 @@ create table if not exists gb_post (
      tags JSON COMMENT '文章标签,json object集合,key为id',
      statu INT(2) NOT NULL DEFAULT 0 COMMENT '文章状态,0公共,1私密,2草稿',
      PRIMARY KEY(id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

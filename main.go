@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"goober/api"
+	"goober/application/rss/controller"
 	"goober/config"
 	mysql "goober/database/mysql"
 	"goober/router/middlewares"
@@ -50,6 +51,11 @@ func main() {
 		v1.GET("/post/post", middlewares.TryGetUserByToken(), api.GetPost)
 		v1.GET("/post/list", api.GetPostList)
 		v1.PUT("/post/action/view", api.PostActionView)
+
+		v1.GET("/rss/feed/web", controller.RssController.GetFeed)
+		v1.GET("/rss/feed/all", controller.RssController.GetAllFeed)
+		v1.POST("/rss/feed", controller.RssController.CreateFeed)
+		v1.GET("/rss/item/list", controller.RssController.GetItemList)
 
 		needAuth := v1.Group("/", middlewares.GetUserByToken(), middlewares.AuthRequired())
 
