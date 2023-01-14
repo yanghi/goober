@@ -3,10 +3,9 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"goober/database/mysql"
-	gerr "goober/error"
+	"goober/application/mysql"
+	"goober/goober"
 	"goober/model/post"
-	"goober/rep"
 	"goober/serializer"
 	"strconv"
 	"strings"
@@ -23,7 +22,7 @@ type ModifyPostService struct {
 	Statu       post.PostStatu
 }
 
-func (srv *ModifyPostService) Modify() *rep.Response {
+func (srv *ModifyPostService) Modify() *goober.ResponseResult {
 
 	var fields []string
 	var values []any
@@ -58,7 +57,7 @@ func (srv *ModifyPostService) Modify() *rep.Response {
 	}
 
 	if len(fields) == 0 {
-		return rep.Build(nil, gerr.ErrUnExpect, "修改无有效字段")
+		return goober.FailedResult(goober.ErrUnExpect, "修改无有效字段")
 	}
 
 	// 更新时间
@@ -67,17 +66,17 @@ func (srv *ModifyPostService) Modify() *rep.Response {
 
 	values = append(values, srv.AuthorId, srv.Id)
 
-	rows, er := mysql.DB.Exec("UPDATE gb_post SET "+strings.Join(fields, ",")+" where author_id=? and id=?", values...)
+	rows, er := mysql.DB().Exec("UPDATE gb_post SET "+strings.Join(fields, ",")+" where author_id=? and id=?", values...)
 
 	if er != nil {
 		fmt.Println("sss", er)
-		return rep.Build(nil, gerr.ErrUnExpect, "修改文章失败")
+		return goober.FailedResult(goober.ErrUnExpect, "修改文章失败")
 	}
 	rowNum, _ := rows.RowsAffected()
 
 	if rowNum == 0 {
-		return rep.Build(nil, gerr.ErrUnExpect, "文章不存在或无权限")
+		return goober.FailedResult(goober.ErrUnExpect, "文章不存在或无权限")
 	}
 
-	return rep.BuildOkResponse(nil)
+	return goober.OkResult(nil)
 }

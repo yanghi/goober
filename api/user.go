@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 	"goober/auth"
-	gerr "goober/error"
-	"goober/rep"
+	"goober/goober"
+
 	"goober/service/user"
 
 	"github.com/gin-gonic/gin"
@@ -24,11 +24,11 @@ func Register(c *gin.Context) {
 		return
 	} else {
 		fmt.Println("should bind er")
-		c.JSON(200, rep.BuildFatalResponse(e))
+		c.JSON(200, goober.WrongResult(e))
 	}
 }
 
-func appendToken(res *rep.Response) *rep.Response {
+func appendToken(res *goober.ResponseResult) *goober.ResponseResult {
 	if res.Ok {
 		m, ok := res.Data.(map[string]any)
 
@@ -59,7 +59,7 @@ func Login(c *gin.Context) {
 		// fmt.Println("er", e)
 		return
 	} else {
-		c.JSON(200, rep.BuildFatalResponse(e))
+		c.JSON(200, goober.WrongResult(e))
 	}
 
 }
@@ -79,7 +79,7 @@ func ModifyUserInfo(c *gin.Context) {
 	e := c.ShouldBind(&service)
 
 	if e != nil {
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}

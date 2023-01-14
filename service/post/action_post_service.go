@@ -1,21 +1,20 @@
 package post
 
 import (
-	"goober/database/mysql"
-	gerr "goober/error"
-	"goober/rep"
+	"goober/application/mysql"
+	"goober/goober"
 )
 
 type ActionPostService struct {
 	Id int `json:"id"`
 }
 
-func (srv *ActionPostService) View() *rep.Response {
-	_, er := mysql.DB.Query("update gb_post set view = view +1 where id=?", srv.Id)
+func (srv *ActionPostService) View() *goober.ResponseResult {
+	_, er := mysql.DB().Query("update gb_post set view = view +1 where id=?", srv.Id)
 
 	if er != nil {
-		return rep.Build(nil, gerr.ErrUnExpect, "view error")
+		return goober.FailedResult(goober.ErrUnExpect, "view error")
 	}
 
-	return rep.BuildOkResponse(nil)
+	return goober.OkResult(nil)
 }

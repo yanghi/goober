@@ -3,10 +3,9 @@ package api
 import (
 	"fmt"
 	"goober/auth"
-	gerr "goober/error"
+	"goober/goober"
 	"goober/model"
 	postmodel "goober/model/post"
-	"goober/rep"
 	"goober/service/post"
 	"strconv"
 
@@ -23,7 +22,7 @@ func CreatePost(c *gin.Context) {
 	e := c.ShouldBind(&service)
 	if e != nil {
 		fmt.Println("sholud bin err", e)
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -40,7 +39,7 @@ func DeletePostByAuthor(c *gin.Context) {
 	e := c.ShouldBind(&service)
 	if e != nil {
 		fmt.Println("sholud bin err", e)
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -49,7 +48,7 @@ func DeletePostByAuthor(c *gin.Context) {
 	pid, e := strconv.Atoi(id)
 
 	if e != nil {
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -64,14 +63,14 @@ func GetPost(c *gin.Context) {
 	sid, hasId := c.GetQuery("id")
 
 	if !hasId {
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
 	id, er := strconv.Atoi(sid)
 
 	if er != nil {
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -139,7 +138,7 @@ func ModifyPost(c *gin.Context) {
 	e := c.ShouldBind(&service)
 	if e != nil {
 		fmt.Println("sholud bin err", e)
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -152,7 +151,7 @@ func PostActionView(c *gin.Context) {
 	pid, e := strconv.Atoi(id)
 
 	if e != nil {
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}

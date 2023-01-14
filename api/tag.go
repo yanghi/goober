@@ -2,8 +2,7 @@ package api
 
 import (
 	"fmt"
-	gerr "goober/error"
-	"goober/rep"
+	"goober/goober"
 	tag_service "goober/service/tag"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,7 @@ func TagCreate(c *gin.Context) {
 	e := c.ShouldBind(&service)
 	if e != nil {
 		fmt.Println("sholud bin err", e)
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -28,7 +27,7 @@ func TagDelete(c *gin.Context) {
 	e := c.ShouldBind(&service)
 	if e != nil {
 		fmt.Println("sholud bin err", e)
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -41,7 +40,7 @@ func TagModify(c *gin.Context) {
 	e := c.ShouldBind(&service)
 	if e != nil {
 		fmt.Println("sholud bin err", e)
-		c.JSON(200, rep.FatalResponseWithCode(gerr.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}

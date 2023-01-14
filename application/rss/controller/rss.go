@@ -16,7 +16,7 @@ func (ctrl *rssController) GetFeed(c *gin.Context) {
 	e := c.ShouldBindQuery(&srv)
 
 	if e != nil || srv.Href == "" {
-		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 
 		c.Abort()
 		return
@@ -29,7 +29,7 @@ func (ctrl *rssController) CreateFeed(c *gin.Context) {
 
 	e := c.ShouldBind(&srv)
 	if e != nil {
-		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}
@@ -55,7 +55,7 @@ func (ctrl *rssController) GetItemList(c *gin.Context) {
 	srv.PPagination = *goober.NewPagination().Querys(srv.PaginationQuery)
 
 	if e != nil {
-		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid))
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
 		c.Abort()
 		return
 	}

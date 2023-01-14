@@ -3,11 +3,10 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"goober/database/mysql"
-	gerr "goober/error"
+	"goober/application/mysql"
+	"goober/goober"
 	"goober/model"
 	"goober/model/post"
-	"goober/rep"
 	"goober/serializer"
 	tag_service "goober/service/tag"
 	user_service "goober/service/user"
@@ -22,7 +21,7 @@ type GetPostListService struct {
 	Statu            post.PostStatu
 }
 
-func (srv *GetPostListService) GetByAuthor() *rep.Response {
+func (srv *GetPostListService) GetByAuthor() *goober.ResponseResult {
 	where := "author_id=" + strconv.Itoa(srv.AuthorId)
 
 	sql := sqlbuilder.Select("*").From("gb_post").Where(where)
@@ -39,14 +38,14 @@ func (srv *GetPostListService) GetByAuthor() *rep.Response {
 	return srv.get(sql, where)
 }
 
-func (srv *GetPostListService) Get() *rep.Response {
+func (srv *GetPostListService) Get() *goober.ResponseResult {
 	where := "statu=" + strconv.Itoa(int(post.PostStatuPublic))
 	sql := sqlbuilder.Select("*").From("gb_post").Where(where)
 
 	return srv.get(sql, where)
 }
 
-func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where string) *rep.Response {
+func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where string) *goober.ResponseResult {
 
 	if where != "" {
 		where = " where " + where
@@ -63,17 +62,17 @@ func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where stri
 		builder.Desc()
 	}
 
-	rows, e := mysql.DB.Query(builder.String())
-	totalRows, _ := mysql.DB.Query("select COUNT(*) total from gb_post" + where)
+	rows, e := mysql.DB().Query(builder.String())
+	totalRows, _ := mysql.DB().Query("select COUNT(*) total from gb_post" + where)
 	if e != nil {
 		fmt.Println("get postlist:", e)
-		return rep.FatalResponseWithCode(gerr.ErrDB)
+		return goober.FailedResult(goober.ErrDB, "")
 	}
-	ms, er := mysql.RowsToMap(rows)
+	ms, er := goober.MysqlRowsToMap(rows)
 
-	t, _ := mysql.RowsToMap((totalRows))
+	t, _ := goober.MysqlRowsToMap((totalRows))
 	if er != nil {
-		return rep.Build(nil, gerr.ErrDB, "获取文章失败,数据转换失败")
+		return goober.FailedResult(goober.ErrDB, "获取文章失败,数据转换失败")
 	}
 
 	total, _ := strconv.Atoi(t[0]["total"].(string))
@@ -181,7 +180,7 @@ func (srv *GetPostListService) get(builder *sqlbuilder.SelectBuilder, where stri
 		totalPages++
 	}
 
-	return rep.BuildOkResponse(map[string]interface{}{
+	return goober.OkResult(map[string]interface{}{
 		"total":      total,
 		"page":       p.Page,
 		"size":       p.Size,

@@ -72,6 +72,13 @@ func (e *Error) Output() *Error {
 func NewError() *Error {
 	return &Error{}
 }
+func NewWithCode(code int) *Error {
+
+	return &Error{
+		code: code,
+		msg:  getErrMsgWithCode(code),
+	}
+}
 
 var em = make(map[int]string)
 
@@ -92,7 +99,7 @@ func toGError(e any) Error {
 	switch e.(type) {
 	case string:
 	case *Error:
-		ge = e.(Error)
+		ge = *e.(*Error)
 	case error:
 		ge = Error{raw: e.(error)}
 	}

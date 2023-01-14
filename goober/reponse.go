@@ -135,7 +135,7 @@ func OkResult(data any) *ResponseResult {
 		Data: data,
 	}
 }
-func FailedResult(code int) *ResponseResult {
+func FailedResult(code int, msg string) *ResponseResult {
 	var r = &ResponseResult{
 		Ok:   false,
 		Code: code,
@@ -143,7 +143,7 @@ func FailedResult(code int) *ResponseResult {
 
 	r.Msg = getErrMsgWithCode(code)
 
-	if r.Msg == "" {
+	if msg == "" {
 		r.Msg = "failed"
 	}
 	return r

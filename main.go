@@ -5,7 +5,7 @@ import (
 	"goober/api"
 	"goober/application/rss/controller"
 	"goober/config"
-	mysql "goober/database/mysql"
+	"goober/database/mysql"
 	"goober/router/middlewares"
 	"os"
 

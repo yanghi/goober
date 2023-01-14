@@ -1,9 +1,8 @@
 package tag_service
 
 import (
-	"goober/database/mysql"
-	gerr "goober/error"
-	"goober/rep"
+	"goober/application/mysql"
+	"goober/goober"
 	"strconv"
 	"strings"
 )
@@ -12,10 +11,10 @@ type GetTagListService struct {
 	IdList []int `json:"idList" form:"idList"`
 }
 
-func (srv *GetTagListService) Get() *rep.Response {
+func (srv *GetTagListService) Get() *goober.ResponseResult {
 	return srv.get("")
 }
-func (srv *GetTagListService) GetByIdList() *rep.Response {
+func (srv *GetTagListService) GetByIdList() *goober.ResponseResult {
 	vals := []string{}
 
 	for _, v := range srv.IdList {
@@ -25,15 +24,15 @@ func (srv *GetTagListService) GetByIdList() *rep.Response {
 	return srv.get("where id in (" + strings.Join(vals, ",") + ")")
 }
 
-func (srv *GetTagListService) get(queryPart string) *rep.Response {
+func (srv *GetTagListService) get(queryPart string) *goober.ResponseResult {
 	// querys:=[]string{"SELECT * FROM gb_post_tag "}
 
-	rows, e := mysql.DB.Query("SELECT * FROM gb_post_tag " + queryPart)
+	rows, e := mysql.DB().Query("SELECT * FROM gb_post_tag " + queryPart)
 
 	if e != nil {
-		return rep.FatalResponseWithCode(gerr.ErrDB)
+		return goober.FailedResult(goober.ErrDB, "")
 	}
-	ms, er := mysql.RowsToMap(rows)
+	ms, er := goober.MysqlRowsToMap(rows)
 
 	for _, v := range ms {
 		// 为什么是string?
@@ -41,9 +40,9 @@ func (srv *GetTagListService) get(queryPart string) *rep.Response {
 		v["id"] = id
 	}
 	if er != nil {
-		return rep.Build(nil, gerr.ErrDB, "获取标签失败,数据转换失败")
+		return goober.FailedResult(goober.ErrDB, "获取标签失败,数据转换失败")
 	}
-	return rep.BuildOkResponse(map[string]interface{}{
+	return goober.OkResult(map[string]interface{}{
 		"list": ms,
 	})
 }

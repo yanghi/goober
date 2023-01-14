@@ -2,10 +2,8 @@ package auth
 
 import (
 	"errors"
-	"fmt"
+	"goober/goober"
 	"time"
-
-	gerrors "goober/error"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -55,29 +53,29 @@ func GenToken(username string, uid int64) (string, error) {
 	return token.SignedString(conf.SignedKey)
 }
 
-func ParseToken(tokenString string) (*DefaultClaims, *gerrors.GError) {
+func ParseToken(tokenString string) (*DefaultClaims, *goober.Error) {
+
 	token, err := jwt.ParseWithClaims(tokenString, &DefaultClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return conf.SignedKey, nil
 	})
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenNotValidYet) {
-			e := gerrors.NewWithCode(gerrors.ErrTokenExpired)
-			fmt.Println("c ge", e, e.Code)
-			return nil, gerrors.NewWithCode(gerrors.ErrTokenExpired)
+			goober.NewWithCode(goober.ErrTokenExpired)
+
+			return nil, goober.NewWithCode(goober.ErrTokenExpired)
 		}
 	}
 	if claims, ok := token.Claims.(*DefaultClaims); ok && token.Valid {
 		return claims, nil
 	} else {
 
-		return nil, gerrors.NewWithCode(gerrors.ErrTokenInvalid)
+		return nil, goober.NewWithCode(goober.ErrTokenInvalid)
 	}
 }
 
-func GetUser(tokenString string) (*JwtUserClaims, *gerrors.GError) {
+func GetUser(tokenString string) (*JwtUserClaims, *goober.Error) {
 	claims, e := ParseToken(tokenString)
 	if e != nil {
-		fmt.Println("get user", e, e.Code)
 		return nil, e
 	}
 

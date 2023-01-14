@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"goober/auth"
-	"goober/error"
-	"goober/rep"
+
+	"goober/goober"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +20,7 @@ func getUserByToken(requiredToken bool) gin.HandlerFunc {
 		token := ctx.GetHeader("Authorization")
 		if token == "" {
 			if requiredToken {
-				ctx.JSON(200, rep.FatalResponseWithCode(error.ErrTokenMissing))
+				ctx.JSON(200, goober.FailedResult(goober.ErrTokenMissing, ""))
 				ctx.Abort()
 			}
 			return
@@ -30,7 +30,7 @@ func getUserByToken(requiredToken bool) gin.HandlerFunc {
 
 		if e != nil {
 			if requiredToken {
-				ctx.JSON(200, rep.FatalResponseWithGError(*e))
+				ctx.JSON(200, goober.WrongResult(e))
 				ctx.Abort()
 			}
 			return
@@ -51,7 +51,7 @@ func AuthRequired() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(200, rep.FatalResponseWithCode(error.ErrTokenInvalid))
+		ctx.JSON(200, goober.FailedResult(goober.ErrTokenInvalid, ""))
 		ctx.Abort()
 	}
 

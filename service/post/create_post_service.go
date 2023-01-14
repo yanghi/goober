@@ -3,10 +3,9 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"goober/database/mysql"
-	gerr "goober/error"
+	"goober/application/mysql"
+	"goober/goober"
 	"goober/model/post"
-	"goober/rep"
 	"goober/serializer"
 )
 
@@ -26,7 +25,7 @@ type Tag struct {
 	Text string `json:"text"`
 }
 
-func (srv *CreatePostService) Run() *rep.Response {
+func (srv *CreatePostService) Run() *goober.ResponseResult {
 
 	tags, _ := json.Marshal(srv.Tags)
 
@@ -35,23 +34,23 @@ func (srv *CreatePostService) Run() *rep.Response {
 	}
 	fmt.Println("createpost srv", srv)
 	fmt.Println("createpost data", srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags), srv.Statu)
-	res, er := mysql.DB.Exec(
+	res, er := mysql.DB().Exec(
 		"INSERT INTO gb_post (title,content,author_id,description,tags,statu) VALUES(?,?,?,?,?,?)",
 		srv.Title, srv.Content, srv.AuthorId, srv.Description, string(tags), srv.Statu,
 	)
 
 	if er != nil {
 		fmt.Println("create post error:", er.Error())
-		return rep.Build(nil, gerr.ErrUnExpect, "创建文章失败")
+		return goober.FailedResult(goober.ErrUnExpect, "创建文章失败")
 	}
 	id, er := res.LastInsertId()
 	if er != nil {
-		return rep.Build(nil, gerr.ErrUnExpect, "创建文章失败")
+		return goober.FailedResult(goober.ErrUnExpect, "创建文章失败")
 	}
 
 	if er != nil {
-		return rep.BuildFatalResponse(er)
+		return goober.WrongResult(er)
 	}
 
-	return rep.BuildOkResponse(CreatePostResult{Id: id})
+	return goober.OkResult(CreatePostResult{Id: id})
 }

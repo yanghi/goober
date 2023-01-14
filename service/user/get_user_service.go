@@ -1,9 +1,9 @@
 package user
 
 import (
-	"goober/database/mysql"
-	gerr "goober/error"
-	"goober/rep"
+	"goober/application/mysql"
+	"goober/goober"
+
 	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -17,30 +17,30 @@ type GetUserService struct {
 type BaseUserMap map[string]interface{}
 
 func (l *GetUserService) GetBaseInfoMap() (map[string]interface{}, error) {
-	rows, er := mysql.DB.Query("select id,name,avatar_url as avatar from gb_user where id=?", l.Id)
+	rows, er := mysql.DB().Query("select id,name,avatar_url as avatar from gb_user where id=?", l.Id)
 
 	if er != nil {
 		return nil, er
 	}
-	ms, er := mysql.RowsToMap(rows)
+	ms, er := goober.MysqlRowsToMap(rows)
 
 	if er != nil {
 		return nil, er
 	}
 
 	if len(ms) == 0 {
-		return nil, gerr.New("用户不存在")
+		return nil, goober.NewError().Msg("用户不存在")
 	}
 
 	return ms[0], nil
 }
-func (srv *GetUserService) GetBaseInfo() *rep.Response {
+func (srv *GetUserService) GetBaseInfo() *goober.ResponseResult {
 	info, e := srv.GetBaseInfoMap()
 
 	if e != nil {
-		return rep.BuildFatalResponse(e)
+		return goober.WrongResult(e)
 	}
-	return rep.BuildOkResponse(info)
+	return goober.OkResult(info)
 }
 func (srv *GetUserService) GetUserBaseInfoListRaw() ([]map[string]interface{}, error) {
 	var ids = ""
@@ -53,12 +53,12 @@ func (srv *GetUserService) GetUserBaseInfoListRaw() ([]map[string]interface{}, e
 		}
 	}
 
-	rows, er := mysql.DB.Query("select id,name,avatar_url as avatar from gb_user where id in (?)", ids)
+	rows, er := mysql.DB().Query("select id,name,avatar_url as avatar from gb_user where id in (?)", ids)
 
 	if er != nil {
 		return nil, er
 	}
-	ms, er := mysql.RowsToMap(rows)
+	ms, er := goober.MysqlRowsToMap(rows)
 
 	if er != nil {
 		return nil, er

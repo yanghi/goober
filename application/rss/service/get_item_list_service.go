@@ -15,14 +15,9 @@ type GetItemListService struct {
 
 func (s *GetItemListService) Get() *goober.ResponseResult {
 
-	sb := sqlbuilder.Select("*").From("gb_rss_feed_items").
-		OrderBy("id").Limit(s.PPagination.Size()).Offset(s.PPagination.Start())
+	sb := sqlbuilder.Select("*").From("gb_rss_feed_items").OrderBy("id")
 
-	if s.PPagination.Order() == goober.PaginationOrderAsc {
-		sb.Asc()
-	} else {
-		sb.Desc()
-	}
+	s.PPagination.TouchSqlBuilder(sb)
 
 	rs, e := mysql.DB().Query(sb.String())
 	if e != nil {

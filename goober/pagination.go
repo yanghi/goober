@@ -1,6 +1,10 @@
 package goober
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/huandu/go-sqlbuilder"
+)
 
 type PaginationOrder = string
 
@@ -147,6 +151,17 @@ func (pg *Pagination) Result() *PaginationResult {
 }
 func (pg *Pagination) Response() *ResponseResult {
 	return OkResult(pg.Result())
+}
+func (pg *Pagination) TouchSqlBuilder(s *sqlbuilder.SelectBuilder) *Pagination {
+	s.Limit(pg.Size()).Offset(pg.Start())
+
+	if pg.Order() == PaginationOrderAsc {
+		s.Asc()
+	} else {
+		s.Desc()
+	}
+
+	return pg
 }
 
 func NewPagination() *Pagination {
