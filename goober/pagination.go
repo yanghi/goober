@@ -29,6 +29,7 @@ type PaginationResult struct {
 	Total     int             `json:"total"`
 	TotalPage int             `json:"totalPage"`
 	Order     PaginationOrder `json:"order"`
+	Size      int             `json:"size"`
 	Page      int             `json:"page"`
 	List      []any           `json:"list"`
 }
@@ -55,13 +56,13 @@ func (pg *Pagination) Querys(q PaginationQuery) *Pagination {
 	}
 
 	p.Order = q.Order
-
+	pg.adjustParams()
 	return pg
 }
 
 func (pg *Pagination) Params(p *PaginationParams) *PaginationParams {
 	pg.params = p
-
+	pg.adjustParams()
 	return pg.params
 }
 func (pg *Pagination) GetParams() *PaginationParams {
@@ -119,6 +120,19 @@ func (pg *Pagination) Total(total int) *Pagination {
 	pg.totalPages = totalPages
 	return pg
 }
+func (pg *Pagination) ListMapResult(list any) any {
+	// m:= make(map[string]any)
+	// res :=
+
+	return map[string]any{
+		"page":       pg.params.Page,
+		"total":      pg.total,
+		"list":       list,
+		"totalPages": pg.totalPages,
+		"order":      pg.params.Order,
+		"size":       pg.Size(),
+	}
+}
 func (pg *Pagination) Result() *PaginationResult {
 
 	res := &PaginationResult{
@@ -126,6 +140,7 @@ func (pg *Pagination) Result() *PaginationResult {
 		Total:     pg.total,
 		List:      pg.list,
 		TotalPage: pg.totalPages,
+		Size:      pg.Size(),
 	}
 
 	return res
@@ -135,5 +150,5 @@ func (pg *Pagination) Response() *ResponseResult {
 }
 
 func NewPagination() *Pagination {
-	return &Pagination{}
+	return &Pagination{params: &PaginationParams{}}
 }
