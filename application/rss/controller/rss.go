@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"goober/application/rss/service"
 	"goober/goober"
 
@@ -61,6 +62,51 @@ func (ctrl *rssController) GetItemList(c *gin.Context) {
 	}
 
 	c.JSON(200, srv.Get())
+}
+func (ctrl *rssController) DeleteFeed(c *gin.Context) {
+	var srv = service.DeleteFeedService{}
+
+	e := c.ShouldBind(&srv)
+	if e != nil {
+		fmt.Println("e", e)
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, srv.Delete())
+}
+func (ctrl *rssController) GetTodayItemList(c *gin.Context) {
+	var srv = service.GetItemListService{}
+
+	e := c.ShouldBindQuery(&srv)
+
+	srv.PPagination = *goober.NewPagination().Querys(srv.PaginationQuery)
+
+	if e != nil {
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
+		c.Abort()
+		return
+	}
+	c.JSON(200, srv.GetToday())
+}
+
+func (ctrl *rssController) UpdateFeed(c *gin.Context) {
+	var srv = service.UpdateFeedItemsService{}
+	href, h := c.GetQuery("href")
+
+	if !h {
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, "缺少href"))
+		c.Abort()
+		return
+	}
+
+	c.JSON(200, srv.UpdateSinge(href))
+}
+func (ctrl *rssController) UpdateAllFeed(c *gin.Context) {
+	var srv = service.UpdateFeedItemsService{}
+
+	c.JSON(200, srv.UpdateAll())
 }
 
 var RssController = rssController{}

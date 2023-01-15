@@ -67,7 +67,9 @@ func (s *CreateFeedService) insertFeedItems(fid int64, feed *gofeed.Feed) error 
 		Cols("guid", "feed_id", "title", "description", "content", "link", "published", "updated", "authors", "categories")
 
 	vals := []any{}
-	for _, it := range feed.Items {
+
+	for l := len(feed.Items) - 1; l >= 0; l-- {
+		it := feed.Items[l]
 		sb.Values("", "", "", "", "", "", "", "", "", "")
 		authors, _ := json.Marshal(it.Authors)
 		cts, _ := json.Marshal(it.Categories)

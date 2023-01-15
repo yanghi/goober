@@ -3,6 +3,7 @@ package service
 import (
 	"goober/application/mysql"
 	"goober/goober"
+	"time"
 
 	"github.com/huandu/go-sqlbuilder"
 )
@@ -15,8 +16,12 @@ type GetItemListService struct {
 
 func (s *GetItemListService) Get() *goober.ResponseResult {
 
-	sb := sqlbuilder.Select("*").From("gb_rss_feed_items").OrderBy("id")
+	sb := sqlbuilder.NewSelectBuilder()
+	return s.get(sb)
+}
+func (s *GetItemListService) get(sb *sqlbuilder.SelectBuilder) *goober.ResponseResult {
 
+	sb.Select("*").From("gb_rss_feed_items").OrderBy("id")
 	s.PPagination.TouchSqlBuilder(sb)
 
 	rs, e := mysql.DB().Query(sb.String())
@@ -36,4 +41,14 @@ func (s *GetItemListService) Get() *goober.ResponseResult {
 	s.PPagination.Total(int(t[0]["total"].(int64)))
 
 	return goober.OkResult(s.PPagination.ListMapResult(dt))
+}
+
+func (s *GetItemListService) GetToday() *goober.ResponseResult {
+	sb := sqlbuilder.NewSelectBuilder()
+
+	t := time.Now().Format("2006-01-02")
+
+	// sb.Where(sb.Or(sb.Like("updated", t+"%"), sb.Like("updated", t+"%")))
+	sb.Where(sb.Or("published LIKE \""+t+"%\"", "updated LIKE \""+t+"%\""))
+	return s.get(sb)
 }

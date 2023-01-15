@@ -55,7 +55,11 @@ func main() {
 		v1.GET("/rss/feed/web", controller.RssController.GetFeed)
 		v1.GET("/rss/feed/all", controller.RssController.GetAllFeed)
 		v1.POST("/rss/feed", controller.RssController.CreateFeed)
+		v1.DELETE("/rss/feed", controller.RssController.DeleteFeed)
+		v1.POST("/rss/feed/update", controller.RssController.UpdateFeed)
+		v1.POST("/rss/feed/updateAll", controller.RssController.UpdateAllFeed)
 		v1.GET("/rss/item/list", controller.RssController.GetItemList)
+		v1.GET("/rss/item/today", controller.RssController.GetTodayItemList)
 
 		needAuth := v1.Group("/", middlewares.GetUserByToken(), middlewares.AuthRequired())
 
