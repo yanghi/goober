@@ -17,9 +17,22 @@ type Response struct {
 	log       bool
 	label     string
 }
+type ResponseOption struct {
+	ResponseResult
+	Label    string
+	Error    error
+	AllowLog bool
+}
 
 func NewResponse() *Response {
 	return &Response{}
+}
+func ResponseWith(opt ResponseOption) *Response {
+	r := Response{log: opt.AllowLog, err: opt.Error, label: opt.Label}
+	r.Code(opt.Code)
+	r.Data(opt.Data)
+
+	return &r
 }
 func ErrorLogResponse(e error, label string) *Response {
 	r := &Response{log: true, label: label, res: ResponseResult{}}

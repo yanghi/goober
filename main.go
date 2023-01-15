@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"goober/api"
 	"goober/application/rss/controller"
+	rss_service "goober/application/rss/service"
 	"goober/config"
 	"goober/database/mysql"
+	"goober/goober"
 	"goober/router/middlewares"
 	"os"
 
@@ -36,6 +38,10 @@ func main() {
 		gin.SetMode(gin.DebugMode)
 		r = gin.Default()
 	}
+	goober.Logger().Info("[goober] app ready")
+
+	var feedJob = rss_service.FeedUpdateJobService{}
+	feedJob.Start()
 
 	var usePprof = config.AppConf.Debug.Pprof
 

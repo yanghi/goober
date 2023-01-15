@@ -11,20 +11,21 @@ import (
 type UpdateFeedItemsService struct {
 }
 type UpdateSingleFeedItemsResult struct {
-	Success     bool   `json:"success"`
-	UpdateCount int    `json:"updateCount"`
-	Reason      string `json:"reason"`
-	Msg         string `json:"msg"`
-	Href        string `json:"href"`
+	Success         bool   `json:"success"`
+	UpdateItemCount int    `json:"updateItemCount"`
+	Reason          string `json:"reason"`
+	Msg             string `json:"msg"`
+	Href            string `json:"href"`
 	// feed id
 	Id int64 `json:"id"`
 }
 type UpdateFeedResult struct {
-	SuccessCount int                           `json:"successCount"`
-	TotalCount   int                           `json:"total"`
-	FailedCount  int                           `json:"failedCount"`
-	ValidCount   int                           `json:"validCount"`
-	Result       []UpdateSingleFeedItemsResult `json:"result"`
+	SuccessCount    int                           `json:"successCount"`
+	TotalCount      int                           `json:"total"`
+	FailedCount     int                           `json:"failedCount"`
+	ValidCount      int                           `json:"validCount"`
+	UpdateItemCount int                           `json:"updateItemCount"`
+	Result          []UpdateSingleFeedItemsResult `json:"result"`
 }
 
 func (s *UpdateFeedItemsService) UpdateSinge(href string) UpdateSingleFeedItemsResult {
@@ -84,13 +85,14 @@ func (s *UpdateFeedItemsService) UpdateSinge(href string) UpdateSingleFeedItemsR
 			var cs = CreateFeedService{}
 			e4 := cs.insertFeedItems(fid, feed)
 			fmt.Println("insert feed item error", e4)
+			// mysql.DB().Query("update gb_rss_feed set feed wh")
 		} else {
 			res.Msg = "已经是最新的"
 		}
 	}
 
 	res.Success = true
-	res.UpdateCount = len(feed.Items)
+	res.UpdateItemCount = len(feed.Items)
 	return res
 }
 func (s *UpdateFeedItemsService) UpdateAll() *goober.ResponseResult {
@@ -112,7 +114,10 @@ func (s *UpdateFeedItemsService) UpdateAll() *goober.ResponseResult {
 
 			if upRes.Success {
 				res.SuccessCount++
-				res.ValidCount += upRes.UpdateCount
+				if upRes.UpdateItemCount > 0 {
+					res.ValidCount++
+				}
+				res.UpdateItemCount += upRes.UpdateItemCount
 			} else {
 				res.FailedCount++
 			}
