@@ -1,7 +1,5 @@
 package goober
 
-import "fmt"
-
 type ResponseResult struct {
 	Data any    `json:"data"`
 	Code int    `json:"code"`
@@ -46,12 +44,18 @@ func (r *Response) From(res ResponseResult) *Response {
 	return r
 }
 func (r *Response) AnyError(e any) *Response {
+	if e == nil {
+		return r
+	}
 	ge := toGError(e)
 
 	r.Error(&ge)
 	return r
 }
 func (r *Response) Error(err *Error) *Response {
+	if err == nil {
+		return r
+	}
 	r.err = err
 	r.res.Msg = err.Error()
 	r.res.Code = err.GetCode()
@@ -59,6 +63,9 @@ func (r *Response) Error(err *Error) *Response {
 	return r
 }
 func (r *Response) RawError(err error) *Response {
+	if err == nil {
+		return r
+	}
 	r.err = err
 	r.res.Msg = err.Error()
 	r.res.Code = ErrUnExpect
@@ -120,11 +127,13 @@ func (r *Response) Log() *Response {
 	if l != "" {
 		l = "(" + l + ")"
 	}
-	fmt.Printf("[goobger response%s]  %s", l, r.res.Msg)
+
+	var emsg string
 
 	if r.err != nil {
-		fmt.Println(" error->", r.err)
+		emsg = "  \nerror msg:" + r.err.Error()
 	}
+	Logger().Errorf("[goobger response%s]  %s code:%d%s", l, r.res.Msg, emsg, r.res.Code)
 
 	return r
 }
