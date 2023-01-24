@@ -46,7 +46,7 @@ func (s *UpdateFeedItemsService) UpdateSinge(href string) UpdateSingleFeedItemsR
 		res.Reason = "不存在"
 		return res
 	}
-	feed, e := gs.GetRawFromWeb()
+	feed, e := gs.GetRawWithUrl()
 
 	if e != nil {
 		res.Msg = "获取数据源失败"

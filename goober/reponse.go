@@ -133,7 +133,7 @@ func (r *Response) Log() *Response {
 	if r.err != nil {
 		emsg = "  \nerror msg:" + r.err.Error()
 	}
-	Logger().Errorf("[goobger response%s]  %s code:%d%s", l, r.res.Msg, emsg, r.res.Code)
+	Logger().Errorf("[goobger response%s]  %s code:%d%s", l, r.res.Msg, r.res.Code, emsg)
 
 	return r
 }
