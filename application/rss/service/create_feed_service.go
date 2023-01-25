@@ -82,9 +82,17 @@ func (s *CreateFeedService) insertFeedItems(fid int64, feed *gofeed.Feed) error 
 
 	for l := len(feed.Items) - 1; l >= 0; l-- {
 		it := feed.Items[l]
+
+		// 部分转换后的时间是无效的
+		if it.PublishedParsed == nil {
+			goober.Logger().Error("[rss] rss数据源时间无效", it.Title, it.Link, feed.FeedLink)
+			continue
+		}
+
 		sb.Values("", "", "", "", "", "", "", "", "", "")
 		authors, _ := json.Marshal(it.Authors)
 		cts, _ := json.Marshal(it.Categories)
+
 		vals = append(vals, it.GUID, fid, it.Title, it.Description, it.Content, it.Link, it.PublishedParsed.Format("2006-01-02 15:04:05"), it.Updated, authors, cts)
 	}
 	_, e2 := mysql.DB().Exec(sb.String(), vals...)

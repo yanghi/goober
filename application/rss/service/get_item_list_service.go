@@ -3,6 +3,7 @@ package service
 import (
 	"goober/application/mysql"
 	"goober/goober"
+	"strconv"
 	"time"
 
 	"github.com/huandu/go-sqlbuilder"
@@ -22,11 +23,16 @@ func (s *GetItemListService) Get() *goober.ResponseResult {
 func (s *GetItemListService) get(sb *sqlbuilder.SelectBuilder) *goober.ResponseResult {
 
 	sb.Select("*").From("gb_rss_feed_items").OrderBy("id")
+
+	if s.FeedId > 0 {
+		sb.Where("feed_id=" + strconv.Itoa(s.FeedId))
+	}
+
 	s.PPagination.TouchSqlBuilder(sb)
 
 	rs, e := mysql.DB().Query(sb.String())
 	if e != nil {
-		return goober.ErrorLogResponse(e, "获取订阅源数据列表").Result()
+		return goober.ErrorLogResponse(e, "获取订阅源数据列表").Code(goober.ErrDB).Result()
 	}
 	dt, e2 := goober.MysqlRowsToMap(rs)
 

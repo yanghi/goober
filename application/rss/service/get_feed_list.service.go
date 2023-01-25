@@ -8,7 +8,8 @@ import (
 type GetFeedListService struct{}
 
 func (s *GetFeedListService) GetAll() *goober.ResponseResult {
-	r, e := mysql.DB().Query("select * from gb_rss_feed")
+	r, e := mysql.DB().Query(
+		"SELECT a.*,b.count from gb_rss_feed a INNER JOIN (SELECT feed_id, COUNT(*) as count FROM gb_rss_feed_items GROUP BY feed_id) b ON a.id = b.feed_id;")
 
 	if e != nil {
 		return goober.WrongResult(e)

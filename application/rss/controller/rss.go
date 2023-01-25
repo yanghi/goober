@@ -108,5 +108,16 @@ func (ctrl *rssController) UpdateAllFeed(c *gin.Context) {
 
 	c.JSON(200, srv.UpdateAll())
 }
+func (ctrl *rssController) ModifyFeed(c *gin.Context) {
+	var srv = service.ModifyFeedService{}
+	e := c.ShouldBind(&srv)
+
+	if e != nil {
+		c.JSON(200, goober.FailedResult(goober.ErrParamsInvlid, ""))
+		c.Abort()
+		return
+	}
+	c.JSON(200, srv.Modify())
+}
 
 var RssController = rssController{}

@@ -63,6 +63,7 @@ func main() {
 		v1.POST("/rss/feed", controller.RssController.CreateFeed)
 		v1.DELETE("/rss/feed", controller.RssController.DeleteFeed)
 		v1.POST("/rss/feed/update", controller.RssController.UpdateFeed)
+		v1.PUT("/rss/feed", controller.RssController.ModifyFeed)
 		v1.POST("/rss/feed/updateAll", controller.RssController.UpdateAllFeed)
 		v1.GET("/rss/item/list", controller.RssController.GetItemList)
 		v1.GET("/rss/item/today", controller.RssController.GetTodayItemList)
