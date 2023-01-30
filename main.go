@@ -69,6 +69,9 @@ func main() {
 		v1.GET("/rss/item/today", controller.RssController.GetTodayItemList)
 
 		needAuth := v1.Group("/", middlewares.GetUserByToken(), middlewares.AuthRequired())
+		needAuth.POST("rss/user/feed", controller.RssUserController.CreateFeed)
+		needAuth.GET("rss/user/feed/all", controller.RssUserController.GetAllFeedList)
+		v1.GET("rss/user/item/list", controller.RssController.GetItemList)
 
 		needAuth.GET("user/post/list", api.GetUserPostList)
 

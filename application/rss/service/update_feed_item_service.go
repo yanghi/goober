@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"goober/application/mysql"
 	"goober/goober"
 
@@ -33,7 +32,6 @@ func (s *UpdateFeedItemsService) UpdateSinge(href string) UpdateSingleFeedItemsR
 	res := UpdateSingleFeedItemsResult{Href: href}
 
 	r, e := mysql.DB().Query("select id from gb_rss_feed where feed_link=?", href)
-	fmt.Println("fs", e)
 
 	if e != nil {
 		res.Reason = e.Error()
@@ -73,6 +71,9 @@ func (s *UpdateFeedItemsService) UpdateSinge(href string) UpdateSingleFeedItemsR
 			latest := []*gofeed.Item{}
 
 			for _, i := range feed.Items {
+				if i.PublishedParsed == nil {
+					continue
+				}
 
 				if i.PublishedParsed.Format("2006-01-02 15:04:05") > lastTime {
 					latest = append(latest, i)
@@ -84,7 +85,9 @@ func (s *UpdateFeedItemsService) UpdateSinge(href string) UpdateSingleFeedItemsR
 		if len(feed.Items) > 0 {
 			var cs = CreateFeedService{}
 			e4 := cs.insertFeedItems(fid, feed)
-			fmt.Println("insert feed item error", e4)
+			if e4 != nil {
+				goober.Logger().Error("insert feed item error", e4)
+			}
 			// mysql.DB().Query("update gb_rss_feed set feed wh")
 		} else {
 			res.Msg = "已经是最新的"

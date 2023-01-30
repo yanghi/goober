@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"goober/application/rss"
 	"goober/goober"
 	"time"
@@ -18,7 +17,6 @@ type GetFeedService struct {
 }
 
 func (s *GetFeedService) GetRawWithUrl() (*gofeed.Feed, error) {
-	fmt.Println("ss", rss.GetRealFeedUrl(s.Href))
 
 	fp := gofeed.NewParser()
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
@@ -28,9 +26,6 @@ func (s *GetFeedService) GetRawWithUrl() (*gofeed.Feed, error) {
 
 	if err != nil {
 		return nil, err
-	}
-	if s.IsHubFeedUrl() {
-		fmt.Println("rss hub rul", feed.Link, feed.FeedLink)
 	}
 
 	formatFeed(feed)

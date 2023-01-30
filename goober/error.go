@@ -13,7 +13,8 @@ const (
 
 	ErrParamsInvlid = 201
 	ErrNotExsit     = 202
-	ErrUnExpect     = 203
+	ErrExsited      = 203
+	ErrUnExpect     = 204
 	// 后端错误码
 
 	ErrServerError = 301

@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"goober/application/mysql"
 	"goober/goober"
 	"strings"
@@ -50,12 +49,12 @@ func (s *CreateFeedService) Create() *goober.ResponseResult {
 
 	if e != nil {
 		tx.Rollback()
-		var msg = "创建失败"
 		if strings.Contains(e.Error(), "Duplicate entry") {
-			msg = "订阅源已添加,请勿重复操作"
+
+			return goober.NewResponse().Code(goober.ErrExsited).Msg("订阅源已添加,请勿重复操作").Result()
 		}
-		fmt.Println("psh", feed.Published, "--", feed.PublishedParsed)
-		return goober.NewResponse().Label("添加订阅源").RawError(e).Msg(msg).AllowLog().Result()
+
+		return goober.NewResponse().Label("添加订阅源").RawError(e).Msg("创建失败").AllowLog().Result()
 	}
 	lid, _ := dr.LastInsertId()
 

@@ -162,8 +162,11 @@ func FailedResult(code int, msg string) *ResponseResult {
 		Ok:   false,
 		Code: code,
 	}
+	r.Msg = msg
 
-	r.Msg = getErrMsgWithCode(code)
+	if msg == "" {
+		r.Msg = getErrMsgWithCode(code)
+	}
 
 	if msg == "" {
 		r.Msg = "failed"
